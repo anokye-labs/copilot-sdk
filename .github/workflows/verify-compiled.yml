@@ -21,10 +21,11 @@ jobs:
       - name: Determine changed workflows
         id: changed-workflows
         env:
-          BASE_REF: ${{ github.base_ref }}
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
         run: |
-          git fetch origin "${BASE_REF}" --depth=1
-          changed="$(git diff --name-only "origin/${BASE_REF}...HEAD" -- '.github/workflows/*.md' '.github/workflows/*.lock.yml')"
+          changed="$(gh api "repos/${REPO}/pulls/${PR_NUMBER}/files" --paginate --jq '.[].filename' | grep -E '^\.github/workflows/.*(\.md|\.lock\.yml)$' || true)"
           declare -A unique=()
           while IFS= read -r path; do
             [ -n "${path}" ] || continue
