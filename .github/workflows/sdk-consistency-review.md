@@ -20,6 +20,8 @@ permissions:
   contents: read
   pull-requests: read
   issues: read
+features:
+  copilot-requests: true
 tools:
   github:
     toolsets: [default]
